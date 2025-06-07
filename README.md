@@ -2,7 +2,7 @@
 This [Homebridge](https://homebridge.io/) plugin provide an accessory for [Windmill Air Conditioners](https://windmillair.com/).
 
 ## How It Works
-This plugin exposes both a thermostat accessory and a fan accessory. The thermostat accessory controls the air conditioner's mode and temperature while the fan accessory controls the air conditioner's fan speed.
+This plugin exposes both a thermostat accessory and a fan accessory. The thermostat accessory controls the air conditioner's mode and temperature while the fan accessory controls the air conditioner's fan speed. If you are using a Windmill Fan device, you can set `fanOnly` in your configuration to hide the thermostat service.
 
 ### Thermostat
 The thermostat accessory allows you to control the air conditioner's mode and temperature. HomeKit's modes are mapped to the Windmill Air Conditioner's modes.
@@ -46,6 +46,19 @@ I recommend using the [homebridge-config-ui-x plugin](https://github.com/homebri
         "name": "Windmill AC",
         "accessory": "HomebridgeWindmillAC",
         "token": "<YOUR_WINDMILL_TOKEN>"
+    }
+]
+```
+
+To expose a Windmill Fan as only a fan service, include `"fanOnly": true`:
+
+```json
+"accessories": [
+    {
+        "name": "Windmill Fan",
+        "accessory": "HomebridgeWindmillAC",
+        "token": "<YOUR_WINDMILL_TOKEN>",
+        "fanOnly": true
     }
 ]
 ```
