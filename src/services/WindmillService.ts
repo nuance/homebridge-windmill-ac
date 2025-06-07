@@ -1,7 +1,8 @@
 import { Logging } from 'homebridge';
 import { BlynkService } from './BlynkService';
 
-const BASE_URL = 'https://dashboard.windmillair.com';
+// Allow overriding the base URL via env for testing
+const BASE_URL = process.env.WINDMILL_BASE_URL ?? 'https://dashboard.windmillair.com';
 
 export enum Pin {
     POWER = 'V0',
