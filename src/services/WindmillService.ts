@@ -68,14 +68,40 @@ export class WindmillService extends BlynkService {
     this.log.debug('Getting mode');
     const value = await this.getPinValue(Pin.MODE);
     this.log.debug(`Mode is ${value}`);
-    return value as Mode;
+    // The value returned from the API is a number represented as a string.
+    // Convert it to the corresponding Mode enum value.
+    switch (parseInt(value, 10)) {
+      case ModeInt.FAN:
+        return Mode.FAN;
+      case ModeInt.COOL:
+        return Mode.COOL;
+      case ModeInt.ECO:
+        return Mode.ECO;
+      default:
+        this.log.warn(`Unknown mode value '${value}'`);
+        return Mode.FAN;
+    }
   }
 
   public async getFanSpeed(): Promise<FanSpeed> {
     this.log.debug('Getting fan speed');
     const value = await this.getPinValue(Pin.FAN);
     this.log.debug(`Fan speed is ${value}`);
-    return value as FanSpeed;
+    // The API returns a number represented as a string. Convert it to the
+    // corresponding FanSpeed enum value.
+    switch (parseInt(value, 10)) {
+      case FanSpeedInt.AUTO:
+        return FanSpeed.AUTO;
+      case FanSpeedInt.LOW:
+        return FanSpeed.LOW;
+      case FanSpeedInt.MEDIUM:
+        return FanSpeed.MEDIUM;
+      case FanSpeedInt.HIGH:
+        return FanSpeed.HIGH;
+      default:
+        this.log.warn(`Unknown fan speed value '${value}'`);
+        return FanSpeed.AUTO;
+    }
   }
 
   public async setPower(value: boolean): Promise<void> {
