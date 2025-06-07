@@ -93,7 +93,8 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
       .setProps({
         minValue: fahrenheitToCelsius(60),
         maxValue: fahrenheitToCelsius(86),
-        minStep: 1,
+        // Use a one-degree Fahrenheit step
+        minStep: fahrenheitToCelsius(1),
       })
       .onGet(this.handleGetTargetTemperature.bind(this))
       .onSet(this.handleSetTargetTemperature.bind(this));
