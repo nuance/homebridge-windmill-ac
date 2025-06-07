@@ -54,7 +54,7 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
 
   public readonly name: string;
 
-  private readonly thermostatService: Service;
+  private readonly thermostatService?: Service;
   private readonly informationService: Service;
   private readonly fanService: Service;
 
@@ -76,31 +76,33 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
       .setCharacteristic(hap.Characteristic.Manufacturer, 'The Air Lab, Inc.')
       .setCharacteristic(hap.Characteristic.Model, 'The Windmill AC');
 
-    // create a new Thermostat service
-    this.thermostatService = new hap.Service.Thermostat();
+    if (!this.config.fanOnly) {
+      // create a new Thermostat service
+      this.thermostatService = new hap.Service.Thermostat();
 
-    this.thermostatService.getCharacteristic(hap.Characteristic.CurrentHeatingCoolingState)
-      .onGet(this.handleGetCurrentHeatingCoolingState.bind(this));
+      this.thermostatService.getCharacteristic(hap.Characteristic.CurrentHeatingCoolingState)
+        .onGet(this.handleGetCurrentHeatingCoolingState.bind(this));
 
-    this.thermostatService.getCharacteristic(hap.Characteristic.TargetHeatingCoolingState)
-      .onGet(this.handleGetTargetHeatingCoolingState.bind(this))
-      .onSet(this.handleSetTargetHeatingCoolingState.bind(this));
+      this.thermostatService.getCharacteristic(hap.Characteristic.TargetHeatingCoolingState)
+        .onGet(this.handleGetTargetHeatingCoolingState.bind(this))
+        .onSet(this.handleSetTargetHeatingCoolingState.bind(this));
 
-    this.thermostatService.getCharacteristic(hap.Characteristic.CurrentTemperature)
-      .onGet(this.handleGetCurrentTemperature.bind(this));
+      this.thermostatService.getCharacteristic(hap.Characteristic.CurrentTemperature)
+        .onGet(this.handleGetCurrentTemperature.bind(this));
 
-    this.thermostatService.getCharacteristic(hap.Characteristic.TargetTemperature)
-      .setProps({
-        minValue: fahrenheitToCelsius(60),
-        maxValue: fahrenheitToCelsius(86),
-        minStep: 1,
-      })
-      .onGet(this.handleGetTargetTemperature.bind(this))
-      .onSet(this.handleSetTargetTemperature.bind(this));
+      this.thermostatService.getCharacteristic(hap.Characteristic.TargetTemperature)
+        .setProps({
+          minValue: fahrenheitToCelsius(60),
+          maxValue: fahrenheitToCelsius(86),
+          minStep: 1,
+        })
+        .onGet(this.handleGetTargetTemperature.bind(this))
+        .onSet(this.handleSetTargetTemperature.bind(this));
 
-    this.thermostatService.getCharacteristic(hap.Characteristic.TemperatureDisplayUnits)
-      .onGet(this.handleGetTemperatureDisplayUnits.bind(this))
-      .onSet(this.handleSetTemperatureDisplayUnits.bind(this));
+      this.thermostatService.getCharacteristic(hap.Characteristic.TemperatureDisplayUnits)
+        .onGet(this.handleGetTemperatureDisplayUnits.bind(this))
+        .onSet(this.handleSetTemperatureDisplayUnits.bind(this));
+    }
 
     // create a new Fan service
     this.fanService = new hap.Service.Fanv2();
@@ -114,9 +116,13 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
       .onSet(this.handleSetFanRotationSpeed.bind(this));
 
 
-    // Set the thermostat service as the primary service
-    this.thermostatService.setPrimaryService(true);
-    this.fanService.setPrimaryService(false);
+    if (this.config.fanOnly) {
+      this.fanService.setPrimaryService(true);
+    } else {
+      // Set the thermostat service as the primary service
+      this.thermostatService!.setPrimaryService(true);
+      this.fanService.setPrimaryService(false);
+    }
     this.informationService.setPrimaryService(false);
   }
 
@@ -351,11 +357,16 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
    * It should return all services which should be added to the accessory.
    */
   getServices(): Service[] {
-    return [
-      this.thermostatService,
+    const services = [
       this.informationService,
       this.fanService,
     ];
+
+    if (!this.config.fanOnly && this.thermostatService) {
+      services.unshift(this.thermostatService);
+    }
+
+    return services;
   }
 
 }
