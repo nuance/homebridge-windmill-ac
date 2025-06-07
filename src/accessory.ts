@@ -59,6 +59,7 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
   private readonly fanService: Service;
 
   private displayUnits: number;
+  private lastFanSpeed: FanSpeed = FanSpeed.LOW;
 
 
   constructor(log: Logging, config: AccessoryConfig) {
@@ -297,7 +298,23 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
 
     // If the fan is turned off, set the fan speed to AUTO
     if(value === hap.Characteristic.Active.INACTIVE) {
+      const currentSpeed = await this.windmill.getFanSpeed();
+      if(currentSpeed !== FanSpeed.AUTO) {
+        this.lastFanSpeed = currentSpeed;
+      }
       await this.windmill.setFanSpeed(FanSpeed.AUTO);
+      return;
+    }
+
+    const power = await this.windmill.getPower();
+    if(!power) {
+      await this.windmill.setPower(true);
+      await this.windmill.setMode(Mode.FAN);
+    }
+
+    const currentSpeed = await this.windmill.getFanSpeed();
+    if(currentSpeed === FanSpeed.AUTO) {
+      await this.windmill.setFanSpeed(this.lastFanSpeed);
     }
   }
 
@@ -332,18 +349,29 @@ class WindmillThermostatAccessory implements AccessoryPlugin {
 
     const intValue = parseInt(value.toString(), 10);
 
-    // If value is 0, the fan speed will be set to AUTO by `handleSetFanActive`
     if (intValue === 0) {
+      await this.windmill.setFanSpeed(FanSpeed.AUTO);
+      await this.fanService.updateCharacteristic(hap.Characteristic.Active, hap.Characteristic.Active.INACTIVE);
       return;
     }
 
-    if (intValue <= 33) {
-      await this.windmill.setFanSpeed(FanSpeed.LOW);
-    } else if (intValue <= 66) {
-      await this.windmill.setFanSpeed(FanSpeed.MEDIUM);
-    } else if (intValue <= 100) {
-      await this.windmill.setFanSpeed(FanSpeed.HIGH);
+    if(!await this.windmill.getPower()) {
+      await this.windmill.setPower(true);
+      await this.windmill.setMode(Mode.FAN);
     }
+
+    let speed: FanSpeed;
+    if (intValue <= 33) {
+      speed = FanSpeed.LOW;
+    } else if (intValue <= 66) {
+      speed = FanSpeed.MEDIUM;
+    } else {
+      speed = FanSpeed.HIGH;
+    }
+
+    await this.windmill.setFanSpeed(speed);
+    this.lastFanSpeed = speed;
+    await this.fanService.updateCharacteristic(hap.Characteristic.Active, hap.Characteristic.Active.ACTIVE);
   }
 
   /*
