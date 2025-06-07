@@ -16,6 +16,12 @@
         "type": "string",
         "required": true,
         "description": "See Configuration section from README for help."
+      },
+      "fanOnly": {
+        "title": "Fan Only",
+        "type": "boolean",
+        "default": false,
+        "description": "Set to true if you are controlling a Windmill Fan device"
       }
     }
   }
