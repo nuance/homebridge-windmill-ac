@@ -68,8 +68,13 @@ export class WindmillService extends BlynkService {
     this.log.debug('Getting mode');
     const value = await this.getPinValue(Pin.MODE);
     this.log.debug(`Mode is ${value}`);
-    // The value returned from the API is a number represented as a string.
-    // Convert it to the corresponding Mode enum value.
+
+    // Recent versions of the API may return the mode name rather than a
+    // numeric value. Handle both cases for compatibility.
+    if (value === Mode.FAN || value === Mode.COOL || value === Mode.ECO) {
+      return value as Mode;
+    }
+
     switch (parseInt(value, 10)) {
       case ModeInt.FAN:
         return Mode.FAN;
@@ -87,8 +92,16 @@ export class WindmillService extends BlynkService {
     this.log.debug('Getting fan speed');
     const value = await this.getPinValue(Pin.FAN);
     this.log.debug(`Fan speed is ${value}`);
-    // The API returns a number represented as a string. Convert it to the
-    // corresponding FanSpeed enum value.
+
+    if (
+      value === FanSpeed.AUTO ||
+      value === FanSpeed.LOW ||
+      value === FanSpeed.MEDIUM ||
+      value === FanSpeed.HIGH
+    ) {
+      return value as FanSpeed;
+    }
+
     switch (parseInt(value, 10)) {
       case FanSpeedInt.AUTO:
         return FanSpeed.AUTO;
