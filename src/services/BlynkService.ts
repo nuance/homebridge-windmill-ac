@@ -28,7 +28,7 @@ export class BlynkService {
    * @param pin The virtual pin to get the value of (e.g. V1)
    * @returns The value of the pin
    */
-  protected async getPinValue(pin: string) {
+  protected async getPinValue(pin: string): Promise<string> {
     const url = new URL('/external/api/get', this.serverAddress);
     url.searchParams.append('token', this.token);
     url.searchParams.append(pin, '');

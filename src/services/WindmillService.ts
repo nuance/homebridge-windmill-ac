@@ -4,7 +4,7 @@ import { HttpClient } from './HttpClient'
 
 const BASE_URL = 'https://dashboard.windmillair.com';
 
-export enum Pin {
+export const enum Pin {
     POWER = 'V0',
     CURRENT_TEMP = 'V1',
     TARGET_TEMP = 'V2',
@@ -12,26 +12,26 @@ export enum Pin {
     FAN = 'V4',
 }
 
-enum ModeInt {
+const enum ModeInt {
     FAN = 0,
     COOL = 1,
     ECO = 2,
 }
 
-export enum Mode {
+export const enum Mode {
     FAN = 'Fan',
     COOL = 'Cool',
     ECO = 'Eco',
 }
 
-enum FanSpeedInt {
+const enum FanSpeedInt {
     AUTO = 0,
     LOW = 1,
     MEDIUM = 2,
     HIGH = 3,
 }
 
-export enum FanSpeed {
+export const enum FanSpeed {
     AUTO = 'Auto',
     LOW = 'Low',
     MEDIUM = 'Medium',
