@@ -1,6 +1,8 @@
 # homebridge-windmill-ac
 This [Homebridge](https://homebridge.io/) plugin provide an accessory for [Windmill Air Conditioners](https://windmillair.com/).
 
+Requires **Node.js 18** or later.
+
 ## How It Works
 This plugin exposes both a thermostat accessory and a fan accessory. The thermostat accessory controls the air conditioner's mode and temperature while the fan accessory controls the air conditioner's fan speed.
 
