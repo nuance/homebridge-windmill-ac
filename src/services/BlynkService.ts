@@ -1,9 +1,10 @@
-import fetch from 'node-fetch';
-import { URL } from 'url';
+import { URL } from 'url'
+import { HttpClient, FetchHttpClient } from './HttpClient'
 
 export interface BlynkServiceConfig {
-    serverAddress: string;
-    token: string;
+    serverAddress: string
+    token: string
+    httpClient?: HttpClient
 }
 
 /**
@@ -13,10 +14,12 @@ export interface BlynkServiceConfig {
 export class BlynkService {
   protected readonly serverAddress: string;
   protected readonly token: string;
+  protected readonly httpClient: HttpClient
 
-  constructor({ serverAddress, token }: BlynkServiceConfig) {
-    this.serverAddress = serverAddress;
-    this.token = token;
+  constructor({ serverAddress, token, httpClient }: BlynkServiceConfig) {
+    this.serverAddress = serverAddress
+    this.token = token
+    this.httpClient = httpClient ?? new FetchHttpClient()
   }
 
   /**
@@ -30,15 +33,7 @@ export class BlynkService {
     url.searchParams.append('token', this.token);
     url.searchParams.append(pin, '');
 
-    const response = await fetch(url.toString());
-
-    if (!response.ok) {
-      throw new Error(`Failed to get pin value for ${pin}`);
-    }
-
-    const text = await response.text();
-
-    return text;
+    return this.httpClient.get(url.toString())
   }
 
   /**
@@ -52,14 +47,7 @@ export class BlynkService {
     url.searchParams.append('token', this.token);
     url.searchParams.append(pin, value);
 
-    const response = await fetch(url.toString());
-
-    if (!response.ok) {
-      throw new Error(`Failed to set pin value for ${pin}`);
-    }
-
-    const text = await response.text();
-
-    return text === '1';
+    const text = await this.httpClient.get(url.toString())
+    return text === '1'
   }
 }

@@ -1,5 +1,6 @@
-import { Logging } from 'homebridge';
-import { BlynkService } from './BlynkService';
+import { Logging } from 'homebridge'
+import { BlynkService } from './BlynkService'
+import { HttpClient } from './HttpClient'
 
 const BASE_URL = 'https://dashboard.windmillair.com';
 
@@ -39,8 +40,8 @@ export enum FanSpeed {
 
 export class WindmillService extends BlynkService {
 
-  constructor(token: string, private readonly log: Logging) {
-    super({ serverAddress: BASE_URL, token });
+  constructor(token: string, private readonly log: Logging, httpClient?: HttpClient) {
+    super({ serverAddress: BASE_URL, token, httpClient })
   }
 
   public async getPower(): Promise<boolean> {
