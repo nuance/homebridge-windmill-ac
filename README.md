@@ -2,7 +2,7 @@
 This [Homebridge](https://homebridge.io/) plugin provide an accessory for [Windmill Air Conditioners](https://windmillair.com/).
 
 ## Requirements
-* Node.js 18 or later
+* Node.js 18.15 or later
 
 
 ## How It Works
