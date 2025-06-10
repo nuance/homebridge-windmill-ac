@@ -1,8 +1,17 @@
 # homebridge-windmill-ac
 This [Homebridge](https://homebridge.io/) plugin provide an accessory for [Windmill Air Conditioners](https://windmillair.com/).
 
+## Requirements
+* Node.js 18 or later
+
+
 ## How It Works
 This plugin exposes both a thermostat accessory and a fan accessory. The thermostat accessory controls the air conditioner's mode and temperature while the fan accessory controls the air conditioner's fan speed.
+
+## Accessory Classes
+- `WindmillThermostatAccessory` &ndash; main accessory exposing thermostat and fan services.
+- `WindmillService` &ndash; wraps the Windmill API.
+- `BlynkService` &ndash; generic helper for the Blynk API.
 
 ### Thermostat
 The thermostat accessory allows you to control the air conditioner's mode and temperature. HomeKit's modes are mapped to the Windmill Air Conditioner's modes.
@@ -40,6 +49,7 @@ First, get your token from the Windmill dashboard.
 I recommend using the [homebridge-config-ui-x plugin](https://github.com/homebridge/homebridge-config-ui-x) or [HOOBS](https://hoobs.com/) to configure the plugin.
 
 ### JSON Configuration
+Add the accessory to the `accessories` section of your Homebridge config:
 ```json
 "accessories": [
     {
@@ -48,4 +58,12 @@ I recommend using the [homebridge-config-ui-x plugin](https://github.com/homebri
         "token": "<YOUR_WINDMILL_TOKEN>"
     }
 ]
+```
+
+## Testing
+Run the linter and build the project before publishing:
+
+```bash
+npm run lint
+npm run build
 ```
